@@ -12,9 +12,17 @@ source "${PROGDIR}/.util/tools.sh"
 # shellcheck source=SCRIPTDIR/.util/print.sh
 source "${PROGDIR}/.util/print.sh"
 
+# shellcheck source=SCRIPTDIR/.util/git.sh
+source "${PROGDIR}/.util/git.sh"
+
 function main() {
   while [[ "${#}" != 0 ]]; do
     case "${1}" in
+      --use-token|-t)
+        shift 1
+        token::fetch
+        ;;
+
       --help|-h)
         shift 1
         usage
@@ -31,26 +39,36 @@ function main() {
     esac
   done
 
-  unit::run
+  if [[ ! -d "${BUILDPACKDIR}/integration" ]]; then
+      util::print::warn "** WARNING  No Integration tests **"
+  fi
+
+  tests::run
 }
 
 function usage() {
   cat <<-USAGE
-unit.sh [OPTIONS]
+integration.sh [OPTIONS]
 
-Runs the unit test suite.
+Runs the integration test suite.
 
 OPTIONS
-  --help  -h  prints the command usage
+  --help       -h  prints the command usage
+  --use-token  -t  use GIT_TOKEN from lastpass
 USAGE
 }
 
-function unit::run() {
-  util::print::title "Run Library pack Unit and Example Tests"
+function token::fetch() {
+  GIT_TOKEN="$(util::git::token::fetch)"
+  export GIT_TOKEN
+}
+
+function tests::run() {
+  util::print::title "Run Library Integration Tests"
 
   testout=$(mktemp)
   pushd "${BUILDPACKDIR}" > /dev/null
-    if go test ./... -v -run "Unit|Example" | tee "${testout}"; then
+    if GOMAXPROCS="${GOMAXPROCS:-4}" go test -count=1 -timeout 0 ./integration/... -v -run Integration | tee "${testout}"; then
       util::tools::tests::checkfocus "${testout}"
       util::print::success "** GO Test Succeeded **"
     else

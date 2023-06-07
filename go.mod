@@ -3,7 +3,7 @@ module github.com/paketo-buildpacks/libreload-packit
 go 1.18
 
 require (
-	github.com/onsi/gomega v1.27.7
+	github.com/onsi/gomega v1.27.8
 	github.com/paketo-buildpacks/packit/v2 v2.11.0
 	github.com/sclevine/spec v1.4.0
 )

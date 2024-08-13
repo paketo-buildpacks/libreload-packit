@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/onsi/gomega v1.34.1
-	github.com/paketo-buildpacks/packit/v2 v2.14.1
+	github.com/paketo-buildpacks/packit/v2 v2.14.2
 	github.com/sclevine/spec v1.4.0
 )
 

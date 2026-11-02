@@ -1,6 +1,6 @@
 module github.com/paketo-buildpacks/libreload-packit
 
-go 1.20
+go 1.27.3
 
 require (
 	github.com/onsi/gomega v1.34.1
